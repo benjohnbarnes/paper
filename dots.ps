@@ -19,6 +19,7 @@
 /fraction {dup truncate sub} def
 /remainder {exch 1 index div fraction mul} def
 /half {2 div} def
+/is_divisor? {mod 0 eq} def
 
 % Derive stuff from parameters
 /heavy_count 8 def
@@ -29,17 +30,20 @@ currentpagedevice /PageSize get dup
 0 get /width rdef
 1 get /height rdef
 
-% Determine if an x y dot index should be drawn heavily.
-% [x y] : [isbig]
-/is_big_dot? {on_heavy? exch on_heavy? or} def
-/on_heavy? {heavy_count mod 0 eq} def
+% Determine if an x y dot index should be drawn heavily - [x y] : [isbig]
+/is_big_dot? 
+{
+    dup2
+    8 is_divisor? exch 8 is_divisor? or
+    3 1 roll
+    4 is_divisor? exch 4 is_divisor? and
+    or
+} def
 
-% Determine dotsize
-% [x y] : [dotsize]
+% Determine dotsize - [x y] : [dotsize]
 /dot_size {is_big_dot? {big_dot_size} {little_dot_size} ifelse} def
 
-% Draw dot
-% [x y dotsize] : []
+% Draw dot - [x y dotsize] : []
 /dot {newpath 0 360 arc fill} def
 
 % Translate origin to centre the heavy grid.
@@ -56,8 +60,7 @@ grid_size grid_size scale
 /width_count width grid_size div truncate def
 /height_count height grid_size div truncate def
 
-% Draw the gid.
-% [] : []
+% Draw the grid - [] : []
 heavy_count negate 1 width_count
 {
     heavy_count negate 1 height_count
