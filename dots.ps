@@ -18,7 +18,7 @@
 /negate {0 rsub} def
 /fraction {dup truncate sub} def
 /remainder {exch 1 index div fraction mul} def
-/find_offset {heavy_size remainder 2 div} def
+/half {2 div} def
 
 % Derive stuff from parameters
 /heavy_count 8 def
@@ -39,12 +39,9 @@ currentpagedevice /PageSize get dup
 
 /dot_size {is_big_dot? {big_dot_size} {little_dot_size} ifelse} def
 
-/width_count width grid_size div truncate def
-/height_count height grid_size div truncate def
-
 % Translate origin to centre the heavy grid.
-width find_offset
-height find_offset
+width heavy_size remainder half
+height heavy_size remainder half
 translate
 
 % Scale to grid size.
@@ -52,6 +49,9 @@ grid_size grid_size scale
 
 % Draw in black.
 0 setgray
+
+/width_count width grid_size div truncate def
+/height_count height grid_size div truncate def
 
 heavy_count negate 1 width_count
 {
