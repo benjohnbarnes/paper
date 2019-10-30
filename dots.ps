@@ -17,6 +17,7 @@
 /rsub {exch sub} def
 /negate {0 rsub} def
 /fraction {dup truncate sub} def
+/remainder {exch 1 index dev fraction mul} def
 /find_offset {heavy_size div fraction heavy_size mul 2 div} def
 
 % Derive stuff from parameters
@@ -24,19 +25,19 @@
 /heavy_size heavy_count grid_size mul def
 
 % Query the page size
-currentpagedevice /PageSize get
-dup 0 get /width rdef
-dup 1 get /height rdef
-pop 
+currentpagedevice /PageSize get dup
+0 get /width rdef
+1 get /height rdef
 
 % Determine if an x y dot index should be drawn heavily.
 /on_heavy? {heavy_count mod 0 eq} def
 /is_big_dot? {on_heavy? exch on_heavy? or} def
 
-% Draw dot at x y
+% Draw dot
+% [x y dotsize] : []
 /dot {newpath 0 360 arc fill} def
-/little_dot {little_dot_size dot} def
-/big_dot {big_dot_size dot} def
+
+/dot_size {is_big_dot? {big_dot_size} {little_dot_size} ifelse} def
 
 /width_count width grid_size div truncate def
 /height_count height grid_size div truncate def
@@ -54,15 +55,21 @@ grid_size grid_size scale
 
 heavy_count negate 1 width_count
 {
-    /xi exch def
     heavy_count negate 1 height_count
     {
-        /yi exch def
+        % Duplicate the x under y.
+        % [x y] : [x x y]
+        1 index exch
 
-        xi yi
-        xi yi is_big_dot?
-        {big_dot} {little_dot} ifelse
+        % Determine the dot size here.
+        % [x y] : [x y dotsize]
+        dup2 dot_size 
+
+        % Render the dot.
+        % [x y dotsize] : []
+        dot
     } for
+    pop
 } for
 
 showpage
