@@ -17,8 +17,8 @@
 /rsub {exch sub} def
 /negate {0 rsub} def
 /fraction {dup truncate sub} def
-/remainder {exch 1 index dev fraction mul} def
-/find_offset {heavy_size div fraction heavy_size mul 2 div} def
+/remainder {exch 1 index div fraction mul} def
+/find_offset {heavy_size remainder 2 div} def
 
 % Derive stuff from parameters
 /heavy_count 8 def
