@@ -46,14 +46,6 @@ currentpagedevice /PageSize get dup
 % Draw dot - [x y dotsize] : []
 /dot {newpath 0 360 arc fill} def
 
-% Translate origin to centre the heavy grid.
-width heavy_size remainder half
-height heavy_size remainder half
-translate
-
-% Scale to grid size.
-grid_size grid_size scale
-
 % Draw in black.
 0 setgray
 
@@ -61,23 +53,36 @@ grid_size grid_size scale
 /height_count height grid_size div truncate def
 
 % Draw the grid - [] : []
-heavy_count negate 1 width_count
+/draw_page 
 {
-    heavy_count negate 1 height_count
+    % Translate origin to centre the heavy grid.
+    width heavy_size remainder half
+    height heavy_size remainder half
+    translate
+
+    % Scale to grid size.
+    grid_size grid_size scale
+
+    heavy_count negate 1 width_count
     {
-        % Duplicate the x under y.
-        % [x y] : [x x y]
-        1 index exch
+        heavy_count negate 1 height_count
+        {
+            % Duplicate the x under y.
+            % [x y] : [x x y]
+            1 index exch
 
-        % Determine the dot size here.
-        % [x y] : [x y dotsize]
-        dup2 dot_size 
+            % Determine the dot size here.
+            % [x y] : [x y dotsize]
+            dup2 dot_size 
 
-        % Render the dot.
-        % [x y dotsize] : []
-        dot
+            % Render the dot.
+            % [x y dotsize] : []
+            dot
+        } for
+        pop
     } for
-    pop
-} for
+}
+def
 
-showpage
+draw_page showpage
+draw_page showpage
