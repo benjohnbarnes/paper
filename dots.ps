@@ -1,0 +1,44 @@
+/mm { 25.4 div 72 mul } def
+
+/grid_size 5 mm def
+/heavy_count 8 def
+/heavy_size heavy_count grid_size mul def
+
+/little_dot {newpath x y 0.1 mm 0 360 arc fill} def
+/big_dot {newpath x y 0.175 mm 0 360 arc fill} def
+
+/negate {0 exch sub} def
+/fraction {dup truncate sub} def
+/find_offset {heavy_size div fraction heavy_size mul 2 div} def
+
+currentpagedevice /PageSize get
+dup 0 get /width exch def
+dup 1 get /height exch def
+pop 
+
+
+/width_count width grid_size div truncate def
+/height_count height grid_size div truncate def
+
+/OFF_X width find_offset def
+/OFF_Y height find_offset def
+
+0 setgray
+
+heavy_count negate 1 width_count
+{
+    /xi exch def
+    /x xi grid_size mul OFF_X add def
+    heavy_count negate 1 height_count
+    {
+        /yi exch def
+        /y yi grid_size mul OFF_Y add def
+
+        xi heavy_count mod 0 eq
+        yi heavy_count mod 0 eq
+        or 
+        {big_dot} {little_dot} ifelse
+    } for
+} for
+
+showpage
