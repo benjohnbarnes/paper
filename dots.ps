@@ -30,13 +30,16 @@ currentpagedevice /PageSize get dup
 1 get /height rdef
 
 % Determine if an x y dot index should be drawn heavily.
-/on_heavy? {heavy_count mod 0 eq} def
+% [x y] : [isbig]
 /is_big_dot? {on_heavy? exch on_heavy? or} def
+/on_heavy? {heavy_count mod 0 eq} def
 
 % Draw dot
 % [x y dotsize] : []
 /dot {newpath 0 360 arc fill} def
 
+% Determine dotsize
+% [x y] : [dotsize]
 /dot_size {is_big_dot? {big_dot_size} {little_dot_size} ifelse} def
 
 % Translate origin to centre the heavy grid.
