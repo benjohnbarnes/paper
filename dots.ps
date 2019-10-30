@@ -1,21 +1,32 @@
 /mm { 25.4 div 72 mul } def
 
+% Useful operators.
+/dup2 {1 index 1 index} def
+/rdef {exch def} def
+
+% Useful maths.
+/rsub {exch sub} def
+/negate {0 rsub} def
+/fraction {dup truncate sub} def
+/find_offset {heavy_size div fraction heavy_size mul 2 div} def
+
+% Grid size parameters.
 /grid_size 5 mm def
 /heavy_count 8 def
 /heavy_size heavy_count grid_size mul def
 
-/little_dot {newpath x y 0.1 mm 0 360 arc fill} def
-/big_dot {newpath x y 0.175 mm 0 360 arc fill} def
+% Draw dot at x y
+/little_dot {newpath 0.1 mm 0 360 arc fill} def
+/big_dot {newpath 0.175 mm 0 360 arc fill} def
 
-/negate {0 exch sub} def
-/fraction {dup truncate sub} def
-/find_offset {heavy_size div fraction heavy_size mul 2 div} def
+% Determine if an x y dot index should be drawn heavily.
+/on_heavy? {heavy_count mod 0 eq} def
+/is_big_dot? {on_heavy? exch on_heavy? or} def
 
 currentpagedevice /PageSize get
-dup 0 get /width exch def
-dup 1 get /height exch def
+dup 0 get /width rdef
+dup 1 get /height rdef
 pop 
-
 
 /width_count width grid_size div truncate def
 /height_count height grid_size div truncate def
@@ -34,10 +45,8 @@ heavy_count negate 1 width_count
         /yi exch def
         /y yi grid_size mul OFF_Y add def
 
-        xi heavy_count mod 0 eq
-        yi heavy_count mod 0 eq
-        or 
-        {big_dot} {little_dot} ifelse
+        xi yi is_big_dot?
+        {x y big_dot} {x y little_dot} ifelse
     } for
 } for
 
