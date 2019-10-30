@@ -1,5 +1,14 @@
 /mm { 25.4 div 72 mul } def
 
+%%%
+% Grid size parameters
+%%%
+
+/grid_size 5 mm def
+/little_dot_size 0.1 mm grid_size div def
+/big_dot_size 0.175 mm grid_size div def
+
+
 % Useful operators.
 /dup2 {1 index 1 index} def
 /rdef {exch def} def
@@ -10,43 +19,49 @@
 /fraction {dup truncate sub} def
 /find_offset {heavy_size div fraction heavy_size mul 2 div} def
 
-% Grid size parameters.
-/grid_size 5 mm def
+% Derive stuff from parameters
 /heavy_count 8 def
 /heavy_size heavy_count grid_size mul def
 
-% Draw dot at x y
-/little_dot {newpath 0.1 mm 0 360 arc fill} def
-/big_dot {newpath 0.175 mm 0 360 arc fill} def
-
-% Determine if an x y dot index should be drawn heavily.
-/on_heavy? {heavy_count mod 0 eq} def
-/is_big_dot? {on_heavy? exch on_heavy? or} def
-
+% Query the page size
 currentpagedevice /PageSize get
 dup 0 get /width rdef
 dup 1 get /height rdef
 pop 
 
+% Determine if an x y dot index should be drawn heavily.
+/on_heavy? {heavy_count mod 0 eq} def
+/is_big_dot? {on_heavy? exch on_heavy? or} def
+
+% Draw dot at x y
+/dot {newpath 0 360 arc fill} def
+/little_dot {little_dot_size dot} def
+/big_dot {big_dot_size dot} def
+
 /width_count width grid_size div truncate def
 /height_count height grid_size div truncate def
 
-/OFF_X width find_offset def
-/OFF_Y height find_offset def
+% Translate origin to centre the heavy grid.
+width find_offset
+height find_offset
+translate
 
+% Scale to grid size.
+grid_size grid_size scale
+
+% Draw in black.
 0 setgray
 
 heavy_count negate 1 width_count
 {
     /xi exch def
-    /x xi grid_size mul OFF_X add def
     heavy_count negate 1 height_count
     {
         /yi exch def
-        /y yi grid_size mul OFF_Y add def
 
+        xi yi
         xi yi is_big_dot?
-        {x y big_dot} {x y little_dot} ifelse
+        {big_dot} {little_dot} ifelse
     } for
 } for
 
