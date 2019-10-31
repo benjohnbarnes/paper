@@ -9,9 +9,9 @@
 /big_dot_size 0.175 mm grid_size div def
 
 % Derive stuff from parameters
-/big_grid_count 8 def
-/small_grid_count 4 def
-/heavy_size big_grid_count grid_size mul def
+/major_grid_count 12 def
+/minor_grid_count 3 def
+/major_grid_size major_grid_count grid_size mul def
 
 % Useful operators.
 /dup2 {1 index 1 index} def
@@ -35,9 +35,9 @@ currentpagedevice /PageSize get dup
 /is_big_dot? 
 {
     dup2
-    big_grid_count is_divisor? exch big_grid_count is_divisor? or
+    major_grid_count is_divisor? exch major_grid_count is_divisor? or
     3 1 roll
-    small_grid_count is_divisor? exch small_grid_count is_divisor? and
+    minor_grid_count is_divisor? exch minor_grid_count is_divisor? and
     or
 } def
 
@@ -57,16 +57,16 @@ currentpagedevice /PageSize get dup
 /draw_page 
 {
     % Translate origin to centre the heavy grid.
-    width heavy_size remainder half
-    height heavy_size remainder half
+    width major_grid_size remainder half
+    height major_grid_size remainder half
     translate
 
     % Scale to grid size.
     grid_size grid_size scale
 
-    big_grid_count negate 1 width_count
+    major_grid_count negate 1 width_count
     {
-        big_grid_count negate 1 height_count
+        major_grid_count negate 1 height_count
         {
             % Duplicate the x under y.
             % [x y] : [x x y]
