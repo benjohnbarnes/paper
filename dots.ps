@@ -1,17 +1,18 @@
 /mm { 25.4 div 72 mul } def
 
-%%%
-% Grid size parameters
-%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Start of grid parameters
 
-/grid_size 5 mm def
-/little_dot_size 0.1 mm grid_size div def
-/big_dot_size 0.175 mm grid_size div def
+/dot_pitch          5 mm                        def
+/minor_grid_count   3                           def
+/major_grid_count   4 minor_grid_count mul      def
 
-% Derive stuff from parameters
-/major_grid_count 12 def
-/minor_grid_count 3 def
-/major_grid_size major_grid_count grid_size mul def
+/little_dot_size    0.1 mm                      def
+/big_dot_size       0.175 mm                    def
+
+% End of grid parameters
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 % Useful operators.
 /dup2 {1 index 1 index} def
@@ -25,11 +26,6 @@
 /half {2 div} def
 /is_divisor? {mod 0 eq} def
 
-
-% Query the page size
-currentpagedevice /PageSize get dup
-0 get /width rdef
-1 get /height rdef
 
 % Determine if an x y dot index should be drawn heavily - [x y] : [isbig]
 /is_big_dot? 
@@ -47,22 +43,25 @@ currentpagedevice /PageSize get dup
 % Draw dot - [x y dotsize] : []
 /dot {newpath 0 360 arc fill} def
 
-% Draw in black.
-0 setgray
+% Query the page size
+currentpagedevice /PageSize get dup
+0 get /page_width rdef
+1 get /page_height rdef
 
-/width_count width grid_size div truncate def
-/height_count height grid_size div truncate def
+/major_grid_size major_grid_count dot_pitch mul def
+/width_count page_width dot_pitch div truncate def
+/height_count page_height dot_pitch div truncate def
 
 % Draw the grid - [] : []
 /draw_page 
 {
     % Translate origin to centre the heavy grid.
-    width major_grid_size remainder half
-    height major_grid_size remainder half
+    page_width major_grid_size remainder half
+    page_height major_grid_size remainder half
     translate
 
     % Scale to grid size.
-    grid_size grid_size scale
+    dot_pitch dot_pitch scale
 
     major_grid_count negate 1 width_count
     {
@@ -73,17 +72,26 @@ currentpagedevice /PageSize get dup
             1 index exch
 
             % Determine the dot size here.
+            % Need to scale down by dot pitch to correct for the transform's scaling.
             % [x y] : [x y dotsize]
-            dup2 dot_size 
+            dup2 dot_size dot_pitch div
 
             % Render the dot.
             % [x y dotsize] : []
             dot
-        } for
-        pop
-    } for
+        } 
+        for
+
+        % Drop the x loop variable.
+        pop     
+    } 
+    for
 }
 def
 
+% Draw in black.
+0 setgray
+
+% Generate two pages.
 draw_page showpage
 draw_page showpage
