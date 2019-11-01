@@ -33,10 +33,11 @@
 
 % Determine if an x y dot index should be drawn heavily - [x y] : [isbig]
 /is_big_dot? {
-    dup2
-    major_grid_count is_divisor? exch major_grid_count is_divisor? or
-    3 1 roll
-    minor_grid_count is_divisor? exch minor_grid_count is_divisor? and
+    /x rdef /y rdef
+    x 2 is_divisor? y 2 is_divisor? and
+    x major_grid_count is_divisor? y major_grid_count is_divisor? or
+    and
+    x minor_grid_count is_divisor? y minor_grid_count is_divisor? and
     or
 } def
 
