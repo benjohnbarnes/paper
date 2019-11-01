@@ -1,3 +1,4 @@
+
 /mm { 25.4 div 72 mul } def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -7,8 +8,8 @@
 /minor_grid_count   4                           def
 /major_grid_count   3 minor_grid_count mul      def
 
-/little_dot_size    0.1 mm                      def
-/big_dot_size       0.175 mm                    def
+/little_dot_size    0.05 mm                     def
+/big_dot_size       0.15 mm                     def
 
 % End of grid parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -31,8 +32,7 @@
 
 
 % Determine if an x y dot index should be drawn heavily - [x y] : [isbig]
-/is_big_dot? 
-{
+/is_big_dot? {
     dup2
     major_grid_count is_divisor? exch major_grid_count is_divisor? or
     3 1 roll
@@ -41,7 +41,12 @@
 } def
 
 % Determine dotsize - [x y] : [dotsize]
-/dot_size {is_big_dot? {big_dot_size} {little_dot_size} ifelse} def
+/dot_size {
+    is_big_dot? 
+    {big_dot_size} 
+    {little_dot_size} 
+    ifelse
+} def
 
 % Draw dot - [x y dotsize] : []
 /dot {newpath 0 360 arc fill} def
