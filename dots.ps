@@ -4,11 +4,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Start of grid parameters
 
-/dot_pitch          5 mm                        def
+/dot_pitch          2.5 mm                      def
 /minor_grid_count   4                           def
-/major_grid_count   3 minor_grid_count mul      def
+/major_grid_count   24 				def
 
-/little_dot_size    0.045 mm                    def
+/little_dot_size    0.10 mm                     def
 /big_dot_size       0.20 mm                     def
 
 % End of grid parameters
@@ -34,9 +34,7 @@
 % Determine if an x y dot index should be drawn heavily - [x y] : [isbig]
 /is_big_dot? {
     /x rdef /y rdef
-    x 2 is_divisor? y 2 is_divisor? and
     x major_grid_count is_divisor? y major_grid_count is_divisor? or
-    and
     x minor_grid_count is_divisor? y minor_grid_count is_divisor? and
     or
 } def
